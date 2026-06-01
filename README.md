@@ -25,6 +25,19 @@ PGADMIN_DEFAULT_EMAIL=admin@neovolt.io
 PGADMIN_DEFAULT_PASSWORD=N3oV0lt!PgAdm#2026xYz
 ```
 
+### 1.5 Installation des Dépendances Python (Optionnel - pour les tests)
+
+Si tu veux lancer les scripts de test Python (`test/test_db_connection.py`) :
+
+```bash
+# Créer un environnement virtuel (recommandé)
+python -m venv .venv
+.\.venv\Scripts\activate
+
+# Installer les dépendances
+pip install -r requirements.txt
+```
+
 ### 2. Démarrage des Services
 
 ```bash
@@ -81,7 +94,7 @@ neovolt_pgadmin        Up ...
 #### Étape 4 : Lancer le Script de Vérification
 
 ```bash
-.\verify_db_init.bat
+.\test\verify_db_init.bat
 ```
 
 Ce script :
@@ -149,7 +162,7 @@ Vérification de l'initialisation PostgreSQL Neovolt
 
 ```bash
 pip install python-dotenv psycopg2-binary
-python tests_infra/test_db_connection.py
+python test/test_db_connection.py
 ```
 
 ### Consulter les Logs du Conteneur
@@ -168,10 +181,12 @@ docker exec -it neovolt_postgres psql -U neovolt_service -d neovolt_grid_db
 
 - `.gitignore` : Exclusions Git (secrets, données, volumes locaux)
 - `.env` : Variables d'environnement (NE JAMAIS committer)
+- `requirements.txt` : Dépendances Python (pour tests)
 - `docker-compose.yml` : Orchestration des conteneurs (database + pgAdmin)
 - `scripts_sql/init.sql` : Schéma relationnel Neovolt (4 tables, indexes, contraintes)
-- `tests_infra/test_db_connection.py` : Test de connectivité Python
-- `verify_db_init.ps1` : Vérification PowerShell post-initialisation
+- `test/test_db_connection.py` : Test de connectivité Python
+- `test/verify_db_init.bat` : Vérification Batch post-initialisation
+- `test/README.md` : Documentation des tests
 
 ## Documentation Schéma
 

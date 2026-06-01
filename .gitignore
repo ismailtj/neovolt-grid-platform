@@ -1,0 +1,120 @@
+# ============================================================================
+# PYTHON - Environnements virtuels et artefacts
+# ============================================================================
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# ============================================================================
+# DOCKER & POSTGRESQL - Volumes et données persistantes locales
+# ============================================================================
+# Volumes PostgreSQL locaux
+postgres_data/
+db_data/
+data/postgres/
+pgdata/
+
+# Fichiers Docker Compose de développement local
+docker-compose.override.yml
+.dockerignore
+
+# Logs des conteneurs
+*.log
+
+# ============================================================================
+# ENVIRONNEMENT & SECRETS - Variables d'environnement et identifiants
+# ============================================================================
+# Fichiers d'environnement (CRITIQUE - ne jamais commiter les secrets)
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+
+# Fichiers de configuration sensibles
+secrets/
+.secrets/
+*.key
+*.pem
+*.crt
+
+# ============================================================================
+# FICHIERS DE DONNÉES - Données volumineuses (CSV, parquet, etc.)
+# ============================================================================
+donnees/
+data/
+datasets/
+*.csv
+*.parquet
+*.xlsx
+*.xls
+*.db
+*.sqlite
+*.pickle
+raw_data/
+processed_data/
+output_data/
+
+# ============================================================================
+# IDE - VS Code, PyCharm et autres éditeurs
+# ============================================================================
+# VS Code
+.vscode/
+*.code-workspace
+.vscode-update.json
+
+# PyCharm / JetBrains
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+*.iws
+*.ipr
+
+# Vim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+.vim/
+
+# Autres éditeurs
+*.sublime-workspace
+*.sublime-project
+
+# ============================================================================
+# SYSTÈME - Fichiers générés par le système d'exploitation
+# ============================================================================
+.DS_Store
+Thumbs.db
+*.bak
+*.tmp

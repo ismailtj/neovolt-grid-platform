@@ -13,12 +13,12 @@ VALID_SEGMENTS = {
 VALID_ZONES = {
     "Val-Nord",
     "Centre-Ville",
-    "Plaine-Sud",
-    "Rive-Est",
-    "Rive-Ouest",
-    "Montagne-Centre",
-    "Port-Industrie",
-    "Parc-Logistique",
+    "Plateau-Est",
+    "Rives-Sud",
+    "Zone-Industrielle",
+    "Coteaux-Ouest",
+    "Bourg-Ancien",
+    "Parc-Tertiaire",
 }
 
 VALID_TYPE_CLIENTS = {"residentiel", "professionnel", "industriel"}

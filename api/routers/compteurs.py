@@ -12,6 +12,7 @@ metadata = MetaData()
 compteurs_table = Table("compteurs", metadata, autoload_with=engine)
 
 
+@router.get("", include_in_schema=False, response_model=List[CompteurSchema])
 @router.get("/", response_model=List[CompteurSchema])
 def read_compteurs(
     skip: int = Query(0, ge=0),

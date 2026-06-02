@@ -1,13 +1,4 @@
-"""
-ETAPE 1 - BLOC 3 (version BASE DE DONNEES) : table analytique
-==============================================================
-Lit la base PostgreSQL (deja nettoyee/imputee par pipeline/etl_pipeline.py)
-et reconstruit la table analytique en JOIGNANT les 4 tables EN SQL.
-Ajoute les variables calendaires. La consommation n'a plus de trou (imputee),
-et le DJU vient directement de la table meteo.
 
-Sortie : outputs/table_analytique.parquet
-"""
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))

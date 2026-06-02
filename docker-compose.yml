@@ -19,6 +19,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - neovolt_network
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -35,6 +37,8 @@ services:
     volumes:
       - pgadmin_data:/var/lib/pgadmin
     restart: unless-stopped
+    networks:
+      - neovolt_network
   
   python:
     image: python:3.12-slim
@@ -49,10 +53,37 @@ services:
     command: bash -c "pip install -r requirements.txt && python pipeline/etl_pipeline.py"
     depends_on:
       - database
+    networks:
+      - neovolt_network
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: neovolt_api
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=database
+      - POSTGRES_PORT=5432
+    volumes:
+      - ./api:/app:ro
+    ports:
+      - "8000:8000"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - neovolt_network
+    restart: unless-stopped
 
 volumes:
   postgres_data:
   pgadmin_data:
+
+networks:
+  neovolt_network:
+    driver: bridge
 
 # Volumes: `postgres_data` est un volume nommé pour persister /var/lib/postgresql/data.
 # Healthcheck: `pg_isready` vérifie la disponibilité PostgreSQL (interval 10s, timeout 5s, retries 5).

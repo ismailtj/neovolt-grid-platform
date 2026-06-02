@@ -10,6 +10,7 @@ import time
 import logging
 from pathlib import Path
 from dotenv import load_dotenv
+import numpy as np
 import pandas as pd
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError
@@ -311,6 +312,26 @@ def ingest_meteo(engine, data_dir):
         # Lecture du CSV
         df = pd.read_csv(csv_file)
         logger.info(f"  → {len(df)} lignes lues depuis {csv_file.name}")
+
+        # Calcul métier du Degré-Jour de Chauffage (DJU)
+        if 'temp_moyenne_c' not in df.columns:
+            raise ValueError("Colonne 'temp_moyenne_c' manquante dans le fichier meteo.csv")
+
+        missing_temp = df['temp_moyenne_c'].isna().sum()
+        if missing_temp > 0:
+            logger.warning(
+                f"  ⚠️ {missing_temp} valeurs manquantes de temp_moyenne_c détectées ; DJU fixé à 0.0 sur ces lignes"
+            )
+
+        df['dju_chauffage'] = np.where(
+            df['temp_moyenne_c'] < 17.0,
+            17.0 - df['temp_moyenne_c'],
+            0.0,
+        )
+        df['dju_chauffage'] = df['dju_chauffage'].round(1).fillna(0.0)
+        logger.info(
+            f"  ✓ Calcul Métier OK : Variable DJU calculée avec succès pour {len(df)} lignes de météo."
+        )
 
         # Déduplication locale sur la clé primaire composite (date, zone)
         if df.duplicated(subset=['date', 'zone']).any():

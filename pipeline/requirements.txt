@@ -1,4 +1,24 @@
-pandas>=2.0.0
-sqlalchemy>=2.0.0
-psycopg2-binary>=2.9.0
-python-dotenv>=1.0.0
+
+# Dépendances du projet Neovolt Grid+
+# Installation : pip install -r requirements.txt
+
+# Données & calcul
+pandas
+numpy
+pyarrow            # lecture/écriture des fichiers .parquet
+
+# Base de données
+sqlalchemy
+psycopg2-binary
+python-dotenv      # lecture du fichier .env
+
+# Machine learning
+scikit-learn
+joblib             # sauvegarde des modèles
+
+# Visualisation / tableaux de bord
+plotly
+
+# API REST (volet Ingénierie - à venir)
+fastapi
+uvicorn[standard]

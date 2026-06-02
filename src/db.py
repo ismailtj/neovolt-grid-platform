@@ -1,36 +1,31 @@
-
-import sys
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-import pandas as pd
-from db import lire_sql
-
-OUT = Path(__file__).resolve().parent.parent / "outputs"; OUT.mkdir(exist_ok=True)
-
-# Jointure des 4 tables, cote PostgreSQL
-requete = """
-SELECT r.id_pdl, r.date, r.consommation_kwh AS conso, r.zone,
-       c.type_client, c.type_chauffage, c.puissance_souscrite_kva,
-       cl.segment, cl.surface_m2, cl.nb_personnes_foyer,
-       m.temp_moyenne_c, m.dju_chauffage
-FROM releves_consommation r
-JOIN compteurs c  ON r.id_pdl = c.id_pdl
-JOIN clients   cl ON c.id_client = cl.id_client
-JOIN meteo     m  ON r.date = m.date AND r.zone = m.zone
 """
-df = lire_sql(requete)
-df["date"] = pd.to_datetime(df["date"])
+Pont vers PostgreSQL : lit la base en SQL et renvoie un DataFrame pandas.
+Aligne sur les memes variables que etl_pipeline.py (POSTGRES_*) lues depuis .env.
+Usage dans n'importe quel script de src/ :  from db import lire_sql
+"""
+import os
+from pathlib import Path
+import pandas as pd
+from sqlalchemy import create_engine, text
 
-# Variables calendaires
-df["mois"] = df["date"].dt.month
-df["annee"] = df["date"].dt.year
-df["jour_semaine"] = df["date"].dt.dayofweek
-df["weekend"] = df["jour_semaine"] >= 5
-saisons = {12:"Hiver",1:"Hiver",2:"Hiver",3:"Printemps",4:"Printemps",5:"Printemps",
-           6:"Ete",7:"Ete",8:"Ete",9:"Automne",10:"Automne",11:"Automne"}
-df["saison"] = df["mois"].map(saisons)
+# Charge le .env de la racine du projet (memes variables que l'ETL)
+try:
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+except ImportError:
+    pass
 
-print("Table analytique (depuis la base) :", df.shape[0], "lignes x", df.shape[1], "colonnes")
-print("Consommation manquante :", int(df["conso"].isna().sum()), "(0 attendu : donnees imputees)")
-df.to_parquet(OUT / "table_analytique.parquet", index=False)
-print("Sauvegardee : outputs/table_analytique.parquet")
+def _url():
+    user = os.getenv("POSTGRES_USER", "neovolt")
+    pwd  = os.getenv("POSTGRES_PASSWORD", "neovolt")
+    host = os.getenv("POSTGRES_HOST", "localhost")
+    port = os.getenv("POSTGRES_PORT", "5432")
+    db   = os.getenv("POSTGRES_DB", "neovolt")
+    return f"postgresql+psycopg2://{user}:{pwd}@{host}:{port}/{db}"
+
+# Un seul moteur reutilise par toutes les requetes
+engine = create_engine(_url(), echo=False)
+
+def lire_sql(query, params=None):
+    """Execute une requete SELECT et renvoie un DataFrame pandas."""
+    return pd.read_sql(text(query), engine, params=params)

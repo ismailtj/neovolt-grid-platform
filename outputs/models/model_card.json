@@ -1,0 +1,46 @@
+{
+  "projet": "Neovolt Grid+",
+  "version": "1.0.0",
+  "date_entrainement": "20260602_1619",
+  "graine_aleatoire": 42,
+  "modeles": {
+    "detection_fraude": {
+      "algorithme": "RandomForestClassifier (class_weight=balanced)",
+      "fichier": "fraude_rf_v1.0.0_20260602_1619.joblib",
+      "features": [
+        "ratio_chute",
+        "ratio_vs_pairs",
+        "conso_par_kva",
+        "cv",
+        "n_zero"
+      ],
+      "metriques": {
+        "roc_auc": 0.935,
+        "pr_auc": 0.448,
+        "recall_at_50": 0.833,
+        "seuil_recommande": 0.2
+      },
+      "usage": "Scoring batch J+1, liste de suspects -> revue humaine OBLIGATOIRE"
+    },
+    "prevision_consommation": {
+      "algorithme": "LinearRegression",
+      "fichier": "prevision_lr_v1.0.0_20260602_1619.joblib",
+      "features": [
+        "mois",
+        "jsem",
+        "weekend",
+        "lag1",
+        "lag7",
+        "roll7",
+        "temp",
+        "dju"
+      ],
+      "metriques": {
+        "mape_pct": 4.44,
+        "horizon": "J+1",
+        "validation": "chronologique"
+      },
+      "usage": "Prevision quotidienne demande reseau -> achats d'energie"
+    }
+  }
+}

@@ -38,6 +38,8 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
+> Note : ce fichier `requirements.txt` pointe vers `pipeline/requirements.txt`.
+
 ### 2. Démarrage des Services
 
 ```bash

@@ -6,8 +6,9 @@ from sqlalchemy.orm import Session
 
 from db import engine, get_db
 from schemas import ClientSchema
+from auth import get_current_user
 
-router = APIRouter(prefix="/clients", tags=["clients"])
+router = APIRouter(prefix="/clients", tags=["clients"], dependencies=[Depends(get_current_user)])
 metadata = MetaData()
 clients_table = Table("clients", metadata, autoload_with=engine)
 

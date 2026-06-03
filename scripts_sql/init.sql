@@ -39,8 +39,23 @@ COMMENT ON COLUMN clients.date_entree IS 'Date d''entrée en relation commercial
 COMMENT ON COLUMN clients.nb_personnes_foyer IS 'Nombre de personnes au foyer (résidentiel uniquement). Plage autorisée : 1 à 5 si renseigné. NULL pour les segments non-résidentiels. Utilisé pour normaliser les consommations énergétiques.';
 COMMENT ON COLUMN clients.surface_m2 IS 'Surface utile du local en mètres carrés. Utilisée pour la normalisation des consommations énergétiques et analyses comparatives d''efficacité énergétique.';
 
+-- ============================================================================-- CREATION DE LA TABLE USERS
 -- ============================================================================
--- CRÉATION DE LA TABLE COMPTEURS
+
+DROP TABLE IF EXISTS users CASCADE;
+
+CREATE TABLE users (
+  username VARCHAR(50) PRIMARY KEY,
+  password_hash VARCHAR(128) NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+COMMENT ON TABLE users IS 'Table des utilisateurs de l''API. Stocke les logins et le hash du mot de passe pour authentification JWT.';
+COMMENT ON COLUMN users.username IS 'Login unique de l''utilisateur. Utilisé comme subject du token JWT.';
+COMMENT ON COLUMN users.password_hash IS 'Hash SHA-256 du mot de passe utilisateur.';
+COMMENT ON COLUMN users.created_at IS 'Horodatage de création du compte utilisateur.';
+
+-- ============================================================================-- CRÉATION DE LA TABLE COMPTEURS
 -- ============================================================================
 
 -- Garantit la réversibilité et re-exécutabilité

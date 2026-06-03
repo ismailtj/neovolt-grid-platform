@@ -9,8 +9,9 @@ from sqlalchemy.orm import Session
 
 from db import engine, get_db
 from schemas import MeteoSchema, VALID_ZONES
+from auth import get_current_user
 
-router = APIRouter(prefix="/meteo", tags=["meteo"])
+router = APIRouter(prefix="/meteo", tags=["meteo"], dependencies=[Depends(get_current_user)])
 metadata = MetaData()
 meteo_table = Table("meteo", metadata, autoload_with=engine)
 

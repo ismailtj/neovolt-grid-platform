@@ -7,8 +7,9 @@ from sqlalchemy.orm import Session
 
 from db import engine, get_db
 from schemas import GlobalStatsResponse, ZoneStatsResponse, VALID_ZONES
+from auth import get_current_user
 
-router = APIRouter(prefix="/stats", tags=["stats"])
+router = APIRouter(prefix="/stats", tags=["stats"], dependencies=[Depends(get_current_user)])
 metadata = MetaData()
 releves_table = Table("releves_consommation", metadata, autoload_with=engine)
 

@@ -6,8 +6,9 @@ from sqlalchemy.orm import Session
 
 from db import engine, get_db
 from schemas import CompteurSchema
+from auth import get_current_user
 
-router = APIRouter(prefix="/compteurs", tags=["compteurs"])
+router = APIRouter(prefix="/compteurs", tags=["compteurs"], dependencies=[Depends(get_current_user)])
 metadata = MetaData()
 compteurs_table = Table("compteurs", metadata, autoload_with=engine)
 

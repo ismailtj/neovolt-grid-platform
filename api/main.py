@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,11 +8,22 @@ from sqlalchemy.exc import SQLAlchemyError
 import logging
 
 from db import SessionLocal, engine
-from routers import clients, compteurs, meteo, releves, stats
+from routers import auth, clients, compteurs, meteo, releves, stats
+from auth import ensure_default_user
 
 logger = logging.getLogger("uvicorn.error")
 
-app = FastAPI(title="Néovolt Energy Platform API")
+env = os.getenv("APP_ENV", "development").lower()
+docs_url = "/docs" if env != "production" else None
+redoc_url = "/redoc" if env != "production" else None
+openapi_url = "/openapi.json" if env != "production" else None
+
+app = FastAPI(
+    title="Néovolt Energy Platform API",
+    docs_url=docs_url,
+    redoc_url=redoc_url,
+    openapi_url=openapi_url,
+)
 
 # CORS policy - permissive for development/tests
 app.add_middleware(
@@ -21,6 +34,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
 app.include_router(clients.router)
 app.include_router(compteurs.router)
 app.include_router(meteo.router)
@@ -48,6 +62,7 @@ def health_db():
 
 @app.on_event("startup")
 def on_startup():
+    ensure_default_user()
     logger.info("API startup: configuration loaded and application initialized.")
 
 

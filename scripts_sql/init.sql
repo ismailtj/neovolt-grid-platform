@@ -191,9 +191,19 @@ COMMENT ON INDEX idx_releves_zone_date IS 'Index composite (zone, date) pour opt
 -- ============================================================================
 
 -- Création des rôles applicatifs sécurisés.
-CREATE ROLE IF NOT EXISTS neovolt_data_engineer WITH LOGIN PASSWORD 'NeovoltDE!2026' NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION;
-CREATE ROLE IF NOT EXISTS neovolt_data_analyst WITH LOGIN PASSWORD 'NeovoltDA!2026' NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION;
-CREATE ROLE IF NOT EXISTS neovolt_api_user WITH LOGIN PASSWORD 'NeovoltAPI!2026' NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'neovolt_data_engineer') THEN
+    CREATE ROLE neovolt_data_engineer WITH LOGIN PASSWORD 'NeovoltDE!2026' NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'neovolt_data_analyst') THEN
+    CREATE ROLE neovolt_data_analyst WITH LOGIN PASSWORD 'NeovoltDA!2026' NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'neovolt_api_user') THEN
+    CREATE ROLE neovolt_api_user WITH LOGIN PASSWORD 'NeovoltAPI!2026' NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION;
+  END IF;
+END
+$$;
 
 -- Attribution des privilèges sur les tables existantes.
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE clients, compteurs, meteo, releves_consommation, users TO neovolt_data_engineer;

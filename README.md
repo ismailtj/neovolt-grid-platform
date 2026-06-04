@@ -7,12 +7,6 @@ modèles de machine learning : détection de fraude et prévision de consommatio
 
 ## Architecture
 
-CSV bruts → ETL (nettoyage + imputation) → PostgreSQL (source de vérité)
-                                                  │
-                              src/ (analyses, ML) ┘ lecture via db.py
-                                                  │
-                                          outputs/ (dashboard, modèles, rapports)
-
 - **Conteneur Database** : PostgreSQL 15-Alpine avec schéma relationnel Neovolt
 - **Interface Admin** : pgAdmin 4 pour gestion/manipulation de la base
 - **API** : FastAPI (à développer)

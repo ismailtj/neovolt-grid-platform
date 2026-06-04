@@ -71,6 +71,7 @@ secrets/
 # FICHIERS DE DONNÉES - Données volumineuses (CSV, parquet, etc.)
 # ============================================================================
 donnees/
+outputs/
 data/
 datasets/
 *.csv

@@ -1,0 +1,169 @@
+<svg viewBox="0 0 1000 760" xmlns="http://www.w3.org/2000/svg" font-family="'IBM Plex Sans','Segoe UI',sans-serif">
+  <defs>
+    <marker id="fl" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#64748B"/>
+    </marker>
+    <marker id="fk" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#2563A6"/>
+    </marker>
+    <style>
+      .layer{fill:#FFFFFF;stroke:#E7E2D8;stroke-width:1.5;}
+      .lbl{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;fill:#0E9384;}
+      .box{fill:#F6F4EF;stroke:#CBD5E1;stroke-width:1.2;}
+      .boxt{font-size:12.5px;fill:#14202E;}
+      .boxs{font-size:10.5px;fill:#64748B;}
+      .ml{fill:#FDF3E3;stroke:#E8A33D;stroke-width:1.3;}
+      .crit{fill:#FBE9E9;stroke:#B4456B;stroke-width:1.3;}
+      .side{fill:#EAF3F1;stroke:#0E9384;stroke-width:1.3;}
+      .sidet{font-size:11.5px;font-weight:600;fill:#0B5E54;}
+      .sides{font-size:10px;fill:#3F6F69;}
+      .title{font-size:19px;font-weight:800;fill:#14202E;}
+      .sub{font-size:12px;fill:#64748B;}
+      .db{fill:#EAF0FB;stroke:#2563A6;stroke-width:2;}
+      .tbl{fill:#FFFFFF;stroke:#2563A6;stroke-width:1.2;}
+      .tblh{font-size:11.5px;font-weight:700;fill:#1B3F73;}
+      .tblc{font-size:9.5px;fill:#5A6B82;}
+    </style>
+  </defs>
+
+  <text x="32" y="34" class="title">Néovolt Grid+ — Architecture technique (centrée base de données)</text>
+  <text x="32" y="54" class="sub">Chaîne batch J+1 : du CSV brut à la décision, via une base PostgreSQL relationnelle (init.sql). Hébergement UE.</text>
+
+  <!-- L1 SOURCES -->
+  <rect class="layer" x="32" y="72" width="710" height="86" rx="12"/>
+  <text x="48" y="94" class="lbl">1 · Sources de données (fichiers / flux)</text>
+  <rect class="box" x="48" y="102" width="158" height="48" rx="9"/>
+  <text x="60" y="121" class="boxt">Compteurs comm.</text><text x="60" y="137" class="boxs">relevés conso</text>
+  <rect class="box" x="216" y="102" width="120" height="48" rx="9"/>
+  <text x="228" y="121" class="boxt">Météo</text><text x="228" y="137" class="boxs">températures</text>
+  <rect class="box" x="346" y="102" width="196" height="48" rx="9"/>
+  <text x="358" y="121" class="boxt">SI métier</text><text x="358" y="137" class="boxs">clients, incidents, réclamations</text>
+  <rect class="box" x="552" y="102" width="178" height="48" rx="9"/>
+  <text x="564" y="121" class="boxt">Journaux sécurité</text><text x="564" y="137" class="boxs">logs d'accès</text>
+
+  <!-- L2 INGESTION + QUALITE -->
+  <rect class="layer" x="32" y="176" width="710" height="80" rx="12"/>
+  <text x="48" y="198" class="lbl">2 · Ingestion &amp; contrôle qualité (le « contrat »)</text>
+  <rect class="box" x="48" y="206" width="340" height="42" rx="9"/>
+  <text x="60" y="226" class="boxt">Extraction + nettoyage</text><text x="60" y="241" class="boxs">dédoublonnage, négatifs, flags, calcul DJU</text>
+  <rect class="box" x="398" y="206" width="332" height="42" rx="9"/>
+  <text x="410" y="226" class="boxt">Validation des contraintes</text><text x="410" y="241" class="boxs">conforme aux CHECK / clés du schéma SQL</text>
+
+  <!-- L3 POSTGRESQL (centrepiece) -->
+  <rect class="db" x="32" y="274" width="710" height="170" rx="14"/>
+  <text x="48" y="296" class="lbl" fill="#1B3F73">3 · Stockage — PostgreSQL (init.sql)</text>
+  <!-- 4 tables -->
+  <rect class="tbl" x="48" y="306" width="158" height="124" rx="8"/>
+  <text x="58" y="324" class="tblh">clients</text>
+  <line x1="48" y1="330" x2="206" y2="330" stroke="#2563A6" stroke-width="1"/>
+  <text x="58" y="345" class="tblc">id_client (PK)</text>
+  <text x="58" y="360" class="tblc">segment, commune</text>
+  <text x="58" y="375" class="tblc">code_postal</text>
+  <text x="58" y="390" class="tblc">nb_personnes_foyer</text>
+  <text x="58" y="405" class="tblc">surface_m2</text>
+
+  <rect class="tbl" x="222" y="306" width="170" height="124" rx="8"/>
+  <text x="232" y="324" class="tblh">compteurs</text>
+  <line x1="222" y1="330" x2="392" y2="330" stroke="#2563A6" stroke-width="1"/>
+  <text x="232" y="345" class="tblc">id_pdl (PK)</text>
+  <text x="232" y="360" class="tblc">id_client (FK→clients)</text>
+  <text x="232" y="375" class="tblc">zone, type_client</text>
+  <text x="232" y="390" class="tblc">puissance_kva</text>
+  <text x="232" y="405" class="tblc">type_chauffage, statut</text>
+
+  <rect class="tbl" x="408" y="306" width="150" height="124" rx="8"/>
+  <text x="418" y="324" class="tblh">meteo</text>
+  <line x1="408" y1="330" x2="558" y2="330" stroke="#2563A6" stroke-width="1"/>
+  <text x="418" y="345" class="tblc">date + zone (PK)</text>
+  <text x="418" y="360" class="tblc">temp_moyenne_c</text>
+  <text x="418" y="375" class="tblc">temp_min / max</text>
+  <text x="418" y="390" class="tblc">dju_chauffage</text>
+
+  <rect class="tbl" x="574" y="306" width="156" height="124" rx="8" fill="#FFF7E8" stroke="#E8A33D"/>
+  <text x="584" y="324" class="tblh" fill="#9A6512">releves_consommation</text>
+  <line x1="574" y1="330" x2="730" y2="330" stroke="#E8A33D" stroke-width="1"/>
+  <text x="584" y="345" class="tblc">id_pdl+date (PK)</text>
+  <text x="584" y="360" class="tblc">id_pdl (FK→compteurs)</text>
+  <text x="584" y="375" class="tblc">consommation_kwh ≥ 0</text>
+  <text x="584" y="390" class="tblc">zone (dénormalisée)</text>
+  <text x="584" y="408" class="tblc" font-style="italic">table de faits · +500k lignes</text>
+  <text x="584" y="422" class="tblc" font-style="italic">index: date, (zone,date)</text>
+
+  <!-- FK arrows -->
+  <line x1="222" y1="350" x2="208" y2="350" stroke="#2563A6" stroke-width="1.4" marker-end="url(#fk)"/>
+  <line x1="574" y1="362" x2="394" y2="362" stroke="#2563A6" stroke-width="1.4" marker-end="url(#fk)"/>
+
+  <!-- L4 ML -->
+  <rect class="layer" x="32" y="462" width="710" height="86" rx="12"/>
+  <text x="48" y="484" class="lbl">4 · Traitement &amp; apprentissage (requêtes SQL → modèles)</text>
+  <rect class="box" x="48" y="492" width="150" height="48" rx="9"/>
+  <text x="60" y="512" class="boxt">Features</text><text x="60" y="528" class="boxs">lecture SQL</text>
+  <rect class="ml" x="208" y="492" width="166" height="48" rx="9"/>
+  <text x="220" y="512" class="boxt">Modèle fraude</text><text x="220" y="528" class="boxs">Random Forest</text>
+  <rect class="ml" x="384" y="492" width="166" height="48" rx="9"/>
+  <text x="396" y="512" class="boxt">Modèle prévision</text><text x="396" y="528" class="boxs">régression J+1</text>
+  <rect class="ml" x="560" y="492" width="170" height="48" rx="9"/>
+  <text x="572" y="512" class="boxt">Registre modèles</text><text x="572" y="528" class="boxs">+ métriques</text>
+
+  <!-- L5 API -->
+  <rect class="layer" x="32" y="566" width="710" height="76" rx="12"/>
+  <text x="48" y="588" class="lbl">5 · Exposition — API REST (interroge PostgreSQL)</text>
+  <rect class="box" x="48" y="596" width="220" height="36" rx="9"/>
+  <text x="60" y="619" class="boxt">GET /previsions</text>
+  <rect class="box" x="278" y="596" width="220" height="36" rx="9"/>
+  <text x="290" y="619" class="boxt">GET /fraude/suspects</text>
+  <rect class="box" x="508" y="596" width="222" height="36" rx="9"/>
+  <text x="520" y="619" class="boxt">GET /indicateurs</text>
+
+  <!-- L6 RESTITUTION -->
+  <rect class="layer" x="32" y="660" width="710" height="80" rx="12"/>
+  <text x="48" y="682" class="lbl">6 · Restitution &amp; usages</text>
+  <rect class="box" x="48" y="690" width="214" height="42" rx="9"/>
+  <text x="60" y="710" class="boxt">Dashboards décideurs</text><text x="60" y="725" class="boxs">3 vues métier</text>
+  <rect class="box" x="272" y="690" width="206" height="42" rx="9"/>
+  <text x="284" y="710" class="boxt">Équipe anti-fraude</text><text x="284" y="725" class="boxs">liste de suspects</text>
+  <rect class="box" x="488" y="690" width="242" height="42" rx="9"/>
+  <text x="500" y="710" class="boxt">Achats d'énergie</text><text x="500" y="725" class="boxs">prévision demande</text>
+
+  <!-- Flèches verticales -->
+  <g stroke="#64748B" stroke-width="1.6" marker-end="url(#fl)">
+    <line x1="387" y1="158" x2="387" y2="174"/>
+    <line x1="387" y1="256" x2="387" y2="272"/>
+    <line x1="387" y1="444" x2="387" y2="460"/>
+    <line x1="387" y1="548" x2="387" y2="564"/>
+    <line x1="387" y1="642" x2="387" y2="658"/>
+  </g>
+
+  <!-- COLONNE TRANSVERSE -->
+  <rect class="side" x="758" y="72" width="210" height="184" rx="11"/>
+  <text x="772" y="96" class="sidet">🔒 Sécurité (by design)</text>
+  <text x="772" y="118" class="sides">Chiffrement repos &amp; transit</text>
+  <text x="772" y="136" class="sides">Identités &amp; rôles (IAM)</text>
+  <text x="772" y="154" class="sides">Cloisonnement réseau</text>
+  <text x="772" y="172" class="sides">Journalisation des accès BDD</text>
+  <text x="772" y="196" class="sidet">⚖ Gouvernance / RGPD</text>
+  <text x="772" y="218" class="sides">Classification des données</text>
+  <text x="772" y="236" class="sides">Minimisation · pseudonym.</text>
+  <text x="772" y="252" class="sides">DPO · AIPD fraude</text>
+
+  <rect class="side" x="758" y="274" width="210" height="90" rx="11"/>
+  <text x="772" y="298" class="sidet">📈 Supervision / MLOps</text>
+  <text x="772" y="320" class="sides">Dérive données &amp; modèle</text>
+  <text x="772" y="338" class="sides">Ré-entraînement déclenché</text>
+  <text x="772" y="356" class="sides">Alertes perf. &amp; SLA 99,5%</text>
+
+  <rect class="crit" x="758" y="382" width="210" height="92" rx="11"/>
+  <text x="772" y="406" class="boxt" font-weight="700" fill="#8A2D4E">⛔ Environnement SCADA</text>
+  <text x="772" y="428" class="boxs" fill="#8A2D4E">Infrastructure critique</text>
+  <text x="772" y="446" class="boxs" fill="#8A2D4E">ISOLÉE — aucun lien direct</text>
+  <text x="772" y="464" class="boxs" fill="#8A2D4E">Aucun flux entrant projet</text>
+
+  <rect class="side" x="758" y="492" width="210" height="150" rx="11" fill="#F4F6FA" stroke="#94A3B8"/>
+  <text x="772" y="516" class="sidet" fill="#334155">🐳 Conteneurisation</text>
+  <text x="772" y="538" class="sides" fill="#475569">docker-compose :</text>
+  <text x="772" y="556" class="sides" fill="#475569">• service postgres (init.sql)</text>
+  <text x="772" y="574" class="sides" fill="#475569">• service api (FastAPI)</text>
+  <text x="772" y="592" class="sides" fill="#475569">Réversibilité : formats</text>
+  <text x="772" y="610" class="sides" fill="#475569">ouverts, pas de verrou</text>
+  <text x="772" y="628" class="sides" fill="#475569">fournisseur.</text>
+</svg>

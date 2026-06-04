@@ -1,8 +1,17 @@
 # Plateforme de Données d'Énergie - Néovolt
 
-Infrastructure conteneurisée pour la gestion des données énergétiques d'un distributeur d'énergie.
+Prototype d'une plateforme de valorisation des données d'un distributeur d'énergie
+régional (600 000 points de livraison). Le projet centralise les données dans une base
+PostgreSQL, produit des analyses et tableaux de bord décisionnels, et entraîne deux
+modèles de machine learning : détection de fraude et prévision de consommation.
 
 ## Architecture
+
+CSV bruts → ETL (nettoyage + imputation) → PostgreSQL (source de vérité)
+                                                  │
+                              src/ (analyses, ML) ┘ lecture via db.py
+                                                  │
+                                          outputs/ (dashboard, modèles, rapports)
 
 - **Conteneur Database** : PostgreSQL 15-Alpine avec schéma relationnel Neovolt
 - **Interface Admin** : pgAdmin 4 pour gestion/manipulation de la base
@@ -134,6 +143,75 @@ Vérification de l'initialisation PostgreSQL Neovolt
 ✓ SUCCÈS : Toutes les tables Neovolt sont présentes et correctement initialisées !
 ============================================================================
 ```
+
+## Charger les données (ETL)
+
+```bash
+python pipeline/etl_pipeline.py
+```
+
+Le pipeline nettoie les CSV (déduplication, imputation des valeurs manquantes/négatives,
+calcul du degré-jour de chauffage) puis charge les tables dans l'ordre des dépendances :
+`clients → compteurs → meteo → releves_consommation`. Il est **idempotent** : relançable
+sans erreur ni doublon.
+ 
+Résultat attendu : 700 clients, 700 compteurs, 5 848 lignes météo, 511 700 relevés.
+
+## Analyses & modèles (lisent la base)
+
+```bash
+python src/03_table_analytique.py   # → outputs/table_analytique.parquet
+python src/04_analyses.py           # statistiques descriptives (console)
+python src/05_dashboard.py          # → outputs/dashboard_neovolt.html
+python src/06_fraude_features.py    # → outputs/features_fraude.csv
+python src/07_fraude_isolation.py   # détection non supervisée + baseline
+python src/08_fraude_supervise.py   # → outputs/suspects_fraude.csv
+python src/09_prevision.py          # → outputs/prevision_test.csv
+python src/10_mlops.py              # → outputs/models/ (modèles + model_card.json)
+python src/11_pipeline.py           # → outputs/pipeline.log
+```
+
+Ouvrir `outputs/dashboard_neovolt.html` dans un navigateur pour le tableau de bord interactif.
+
+## Base de données
+ 
+Quatre tables (voir `scripts_sql/init.sql`) :
+ 
+| Table | Description | Clé primaire |
+|---|---|---|
+| `clients` | Métadonnées commerciales et géographiques | `id_client` |
+| `compteurs` | Points de livraison (PDL) | `id_pdl` |
+| `meteo` | Observations quotidiennes par zone + DJU | `(date, zone)` |
+| `releves_consommation` | Table de faits (+500k lignes) | `(id_pdl, date)` |
+ 
+Les contraintes `CHECK` et les clés étrangères garantissent la qualité : c'est l'ETL
+qui rend les données conformes (nettoyage) avant le chargement.
+ 
+## Résultats clés
+ 
+**Analyse (Data Analyst).** La consommation est ~25 % plus élevée en hiver. La sensibilité
+au froid est portée par les clients chauffés à l'électricité : corrélation
+consommation/degré-jour de **+0,69** (contre +0,14 pour le gaz). Satisfaction client
+moyenne basse (2,45/5) relevée dans les réclamations.
+ 
+**Détection de fraude (Data Scientist).** Modèle Random Forest, **ROC-AUC 0,92**. Au seuil
+recommandé (0,20), il signale ~37 compteurs et retrouve ~79 % des fraudes connues. La
+variable la plus discriminante est la **chute de consommation** (`ratio_chute`).
+ 
+**Prévision de consommation (Data Scientist).** Régression à J+1, **erreur moyenne ~4,5 %**
+(MAPE), meilleure que la baseline saisonnière (6,1 %). Validation chronologique.
+
+## Choix techniques notables
+ 
+- **PostgreSQL comme source de vérité unique** : une seule base cohérente, lue par tous les composants.
+- **Nettoyage par imputation** : les valeurs manquantes/négatives sont remplacées par la
+  moyenne du compteur (puis de la zone, puis globale) — la base est complète et directement exploitable.
+- **Pipeline idempotent** : relançable sans corrompre les données (vérification des clés déjà présentes).
+- **Approche « baseline d'abord »** en ML : une règle simple est systématiquement comparée
+  aux modèles ; la complexité n'est retenue que si elle apporte une valeur mesurable.
+- **Métriques adaptées au déséquilibre** : précision, rappel, PR-AUC et recall@N pour la
+  fraude (l'exactitude serait trompeuse avec 96 % de compteurs sains).
+
 
 ## Accès aux Services
 

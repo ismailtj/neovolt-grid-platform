@@ -17,6 +17,8 @@ La **plateforme Néovolt** est une infrastructure conteneurisée et scalable con
 1. Déploiement reproductible et isolé (Docker Compose)
 2. Performance requêtage analytique (PostgreSQL optimisé, indexation)
 3. Sécurité des accès (JWT OAuth2 Bearer, authentification API)
+   - Rôles PostgreSQL applicatifs définis : `neovolt_data_engineer`, `neovolt_data_analyst`, `neovolt_api_user`
+   - Accès minimal pour l’API via `neovolt_api_user`
 4. Scalabilité horizontale future (design stateless, séparation concerns)
 
 ---

@@ -28,6 +28,13 @@ PGADMIN_DEFAULT_EMAIL=admin@neovolt.io
 PGADMIN_DEFAULT_PASSWORD=N3oV0lt!PgAdm#2026xYz
 ```
 
+> Note de sécurité : le script `scripts_sql/init.sql` crée désormais des rôles applicatifs PostgreSQL dédiés :
+> - `neovolt_data_engineer` pour le pipeline ETL
+> - `neovolt_data_analyst` pour les usages BI/analyses
+> - `neovolt_api_user` pour l’API FastAPI
+>
+> En production, l’API doit se connecter avec le rôle restreint `neovolt_api_user` plutôt qu’avec le rôle de provisioning initial ou un superutilisateur.
+
 ### 1.5 Installation des Dépendances Python (Optionnel - pour les tests)
 
 Si tu veux lancer les scripts de test Python (`test/test_db_connection.py`) :

@@ -22,6 +22,8 @@ This folder contains the FastAPI application for the Néovolt grid platform.
    - `AUTH_USERNAME`
    - `AUTH_PASSWORD`
 
+> Security note: the database schema creates dedicated PostgreSQL roles for RBAC. In a hardened deployment, the API should use `POSTGRES_USER=neovolt_api_user` to connect with the least privilege required.
+
 ## Run
 
 ```bash

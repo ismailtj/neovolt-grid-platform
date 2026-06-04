@@ -186,4 +186,34 @@ COMMENT ON INDEX idx_releves_date IS 'Index B-Tree sur date pour accélérer les
 CREATE INDEX idx_releves_zone_date ON releves_consommation (zone, date);
 COMMENT ON INDEX idx_releves_zone_date IS 'Index composite (zone, date) pour optimiser les requêtes analytiques segmentées par zone. Support rapide pour API FastAPI et analyses Data Scientist.';
 
+-- ============================================================================
+-- GESTION DES ROLES ET PRIVILEGES RBAC
+-- ============================================================================
+
+-- Création des rôles applicatifs sécurisés.
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'neovolt_data_engineer') THEN
+    CREATE ROLE neovolt_data_engineer WITH LOGIN PASSWORD 'NeovoltDE!2026' NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'neovolt_data_analyst') THEN
+    CREATE ROLE neovolt_data_analyst WITH LOGIN PASSWORD 'NeovoltDA!2026' NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'neovolt_api_user') THEN
+    CREATE ROLE neovolt_api_user WITH LOGIN PASSWORD 'NeovoltAPI!2026' NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION;
+  END IF;
+END
+$$;
+
+-- Attribution des privilèges sur les tables existantes.
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE clients, compteurs, meteo, releves_consommation, users TO neovolt_data_engineer;
+GRANT SELECT ON TABLE clients, compteurs, meteo, releves_consommation, users TO neovolt_data_analyst;
+GRANT SELECT ON TABLE clients, compteurs, meteo, releves_consommation TO neovolt_api_user;
+GRANT SELECT, INSERT, UPDATE ON TABLE users TO neovolt_api_user;
+
+-- Privilèges par défaut pour les futures tables créées par le rôle propriétaire actuel.
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO neovolt_data_engineer;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO neovolt_data_analyst;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE ON TABLES TO neovolt_api_user;
+
 

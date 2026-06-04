@@ -73,7 +73,6 @@ secrets/
 outputs/
 data/
 datasets/
-*.csv
 *.parquet
 *.xlsx
 *.xls

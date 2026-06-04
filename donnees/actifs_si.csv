@@ -1,0 +1,29 @@
+id_actif,nom,type,criticite,exposition,proprietaire,donnees_sensibles
+SRV-WEB-01,Portail client (front),serveur,critique,internet,Securite SI,oui
+SRV-WEB-02,API espace client,application,critique,dmz,DSI,oui
+SRV-APP-10,Plateforme data (data lake),application,critique,interne,Relation client,oui
+SRV-DB-01,Base clients et facturation,base_de_donnees,critique,interne,Relation client,oui
+SRV-DB-02,Base releves compteurs,base_de_donnees,critique,interne,DSI,oui
+SCADA-01,Supervision reseau electrique (SCADA),scada,critique,interne,DSI,non
+SCADA-02,Passerelle telereleve compteurs,scada,critique,dmz,Exploitation reseau,oui
+AD-01,Annuaire Active Directory,application,critique,interne,Relation client,oui
+VPN-01,Concentrateur VPN acces distant,equipement_reseau,elevee,internet,Exploitation reseau,non
+FW-01,Pare-feu peripherique,equipement_reseau,elevee,internet,Securite SI,non
+SRV-MAIL-01,Messagerie interne,serveur,elevee,dmz,Securite SI,oui
+SRV-BI-01,Serveur de reporting BI,application,elevee,interne,Exploitation reseau,oui
+SRV-FILE-01,Serveur de fichiers,serveur,moderee,interne,DSI,oui
+SRV-SAUV-01,Serveur de sauvegarde,serveur,elevee,interne,Securite SI,oui
+IOT-GW-01,Concentrateur IoT compteurs zone Nord,compteur_iot,elevee,interne,Exploitation reseau,oui
+IOT-GW-02,Concentrateur IoT compteurs zone Sud,compteur_iot,elevee,interne,Exploitation reseau,oui
+PC-001,Poste de travail 001,poste_travail,faible,interne,Exploitation reseau,non
+PC-002,Poste de travail 002,poste_travail,faible,interne,Relation client,non
+PC-003,Poste de travail 003,poste_travail,faible,interne,DSI,non
+PC-004,Poste de travail 004,poste_travail,faible,interne,Exploitation reseau,non
+PC-005,Poste de travail 005,poste_travail,faible,interne,Relation client,non
+PC-006,Poste de travail 006,poste_travail,faible,interne,Exploitation reseau,non
+PC-007,Poste de travail 007,poste_travail,faible,interne,Relation client,non
+PC-008,Poste de travail 008,poste_travail,faible,interne,Exploitation reseau,non
+PC-009,Poste de travail 009,poste_travail,faible,interne,Relation client,non
+PC-010,Poste de travail 010,poste_travail,faible,interne,Relation client,non
+PC-011,Poste de travail 011,poste_travail,faible,interne,Relation client,non
+PC-012,Poste de travail 012,poste_travail,faible,interne,Relation client,non
